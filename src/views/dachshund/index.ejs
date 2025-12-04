@@ -1,0 +1,71 @@
+<%- include('../partials/header', { title: 'Lista jamników' }) %>
+
+<section class="container">
+
+	<!-- Filter / sort form (GET) -->
+	<form method="get" action="/" class="filter-form">
+		<label>Nazwa:<br /><input type="text" name="name" value="<%= query && query.name ? query.name : '' %>" /></label>
+		<label>Rasa:<br />
+			<select name="breed">
+				<option value="">--</option>
+				<option value="jamnik krotkowlosy" <%= query && query.breed === 'jamnik krotkowlosy' ? 'selected' : '' %>>jamnik krotkowlosy</option>
+				<option value="jamnik dlugowlosy" <%= query && query.breed === 'jamnik dlugowlosy' ? 'selected' : '' %>>jamnik dlugowlosy</option>
+			</select>
+		</label>
+		<label>Status:<br />
+			<select name="status">
+				<option value="">--</option>
+				<option value="dostępny" <%= query && query.status === 'dostępny' ? 'selected' : '' %>>dostępny</option>
+				<option value="adoptowany" <%= query && query.status === 'adoptowany' ? 'selected' : '' %>>adoptowany</option>
+			</select>
+		</label>
+		<label>Wiek od:<br /><input type="number" name="minAge" min="0" value="<%= query && query.minAge ? query.minAge : '' %>" /></label>
+		<label>do:<br /><input type="number" name="maxAge" min="0" value="<%= query && query.maxAge ? query.maxAge : '' %>" /></label>
+		<label>Sortuj po:<br />
+			<select name="sortBy">
+				<option value="">--</option>
+				<option value="name" <%= query && query.sortBy === 'name' ? 'selected' : '' %>>nazwa</option>
+				<option value="age" <%= query && query.sortBy === 'age' ? 'selected' : '' %>>wiek</option>
+				<option value="breed" <%= query && query.sortBy === 'breed' ? 'selected' : '' %>>rasa</option>
+			</select>
+		</label>
+		<label>Porządek:<br />
+			<select name="order">
+				<option value="asc" <%= !query || query.order === 'asc' ? 'selected' : '' %>>rosnąco</option>
+				<option value="desc" <%= query && query.order === 'desc' ? 'selected' : '' %>>malejąco</option>
+			</select>
+		</label>
+		<div class="filter-actions"><button class="btn" type="submit">Filtruj</button></div>
+	</form>
+	<% if (Array.isArray(dachshunds) && dachshunds.length) { %>
+		<ul class="dachshund-list">
+			<% dachshunds.forEach(function(d){ %>
+				<li class="dachshund-item">
+					<div class="meta"><a href="/<%= d._id %>"><strong><%= d.name || d.title || ('Jamnik ' + d._id) %></strong></a></div>
+					<div class="actions">
+						<a class="btn btn-plain" href="/<%= d._id %>/edit">Edytuj</a>
+						<form class="delete-form" action="/<%= d._id %>/delete" method="post">
+							<input class="input-inline" type="password" name="password" placeholder="Hasło do usunięcia" />
+							<!-- preserve current filters/sort so delete can re-render the same view on error -->
+							<input type="hidden" name="name" value="<%= query && query.name ? query.name : '' %>" />
+							<input type="hidden" name="breed" value="<%= query && query.breed ? query.breed : '' %>" />
+							<input type="hidden" name="status" value="<%= query && query.status ? query.status : '' %>" />
+							<input type="hidden" name="minAge" value="<%= query && query.minAge ? query.minAge : '' %>" />
+							<input type="hidden" name="maxAge" value="<%= query && query.maxAge ? query.maxAge : '' %>" />
+							<input type="hidden" name="sortBy" value="<%= query && query.sortBy ? query.sortBy : '' %>" />
+							<input type="hidden" name="order" value="<%= query && query.order ? query.order : '' %>" />
+							<button class="btn" type="submit">Usuń</button>
+						</form>
+					</div>
+					<% if (typeof errors !== 'undefined' && errors[String(d._id)]) { %>
+						<div class="error"><%= errors[String(d._id)] %></div>
+					<% } %>
+				</li>
+			<% }) %>
+		</ul>
+	<% } else { %>
+		<p>Brak wpisów o jamnikach w bazie.</p>
+	<% } %>
+</section>
+
+<%- include('../partials/footer') %>

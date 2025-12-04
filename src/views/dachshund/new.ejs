@@ -1,0 +1,67 @@
+<%- include('../partials/header', { title: 'Dodaj jamnika' }) %>
+
+<section>
+  <h1>Dodaj jamnika</h1>
+  <form action="/new" method="post">
+    <% const v = (typeof values !== 'undefined') ? values : {} %>
+    <% const errs = (typeof errors !== 'undefined') ? errors : {} %>
+    <div>
+      <label>Nazwa:<br />
+        <input type="text" name="name" required value="<%= v.name ? v.name : '' %>" />
+      </label>
+      <% if (errs && errs.name) { %>
+        <div class="error"><%= errs.name %></div>
+      <% } %>
+    </div>
+    <div>
+      <label>Wiek:<br />
+        <input type="number" name="age" min="0" value="<%= v.age ? v.age : '' %>" />
+      </label>
+      <% if (errs && errs.age) { %>
+        <div class="error"><%= errs.age %></div>
+      <% } %>
+    </div>
+    <div>
+      <label>Rasa:<br />
+        <select name="breed">
+          <option value="">--</option>
+          <option value="jamnik krotkowlosy" <%= v.breed === 'jamnik krotkowlosy' ? 'selected' : '' %>>jamnik krotkowlosy</option>
+          <option value="jamnik dlugowlosy" <%= v.breed === 'jamnik dlugowlosy' ? 'selected' : '' %>>jamnik dlugowlosy</option>
+        </select>
+      </label>
+      <% if (errs && errs.breed) { %>
+        <div class="error"><%= errs.breed %></div>
+      <% } %>
+    </div>
+    <div>
+      <label>Opis:<br />
+        <textarea name="description" rows="4"><%= v.description ? v.description : '' %></textarea>
+      </label>
+    </div>
+    <div>
+      <label>Status:<br />
+        <select name="status">
+          <option value="">--</option>
+          <option value="dostępny" <%= v.status === 'dostępny' ? 'selected' : '' %>>dostępny</option>
+          <option value="adoptowany" <%= v.status === 'adoptowany' ? 'selected' : '' %>>adoptowany</option>
+        </select>
+      </label>
+      <% if (errs && errs.status) { %>
+        <div class="error"><%= errs.status %></div>
+      <% } %>
+    </div>
+    <div>
+      <label>Hasło do edycji (opcjonalne):<br />
+        <input type="password" name="password" />
+      </label>
+      <% if (errs && errs.password) { %>
+        <div class="error"><%= errs.password %></div>
+      <% } %>
+    </div>
+    <div>
+      <button type="submit">Dodaj</button>
+    </div>
+  </form>
+</section>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,80 @@
+<%- include('../partials/header', { title: 'Edytuj jamnika' }) %>
+
+<section>
+  <h1>Edytuj jamnika</h1>
+  <% if (typeof error !== 'undefined' && error) { %>
+    <div class="error"><%= error %></div>
+  <% } %>
+  <% const errs = (typeof errors !== 'undefined') ? errors : {} %>
+  <% if (errs) { %>
+    <% Object.keys(errs).forEach(function(f) { %>
+      <div class="error"><%= errs[f] %></div>
+    <% }) %>
+  <% } %>
+
+  <form action="/<%= dachshund._id %>" method="post">
+  <% const v = dachshund || {} %>
+    <div>
+      <label>Nazwa:<br />
+        <input type="text" name="name" value="<%= v.name || '' %>" required />
+      </label>
+      <% if (errs && errs.name) { %>
+        <div class="error"><%= errs.name %></div>
+      <% } %>
+    </div>
+    <div>
+      <label>Wiek:<br />
+        <input type="number" name="age" min="0" value="<%= typeof v.age !== 'undefined' && v.age !== null ? v.age : '' %>" />
+      </label>
+      <% if (errs && errs.age) { %>
+        <div class="error"><%= errs.age %></div>
+      <% } %>
+    </div>
+    <div>
+      <label>Rasa:<br />
+        <select name="breed">
+          <option value="" <%= !v.breed ? 'selected' : '' %>>--</option>
+          <option value="jamnik krotkowlosy" <%= v.breed === 'jamnik krotkowlosy' ? 'selected' : '' %>>jamnik krotkowlosy</option>
+          <option value="jamnik dlugowlosy" <%= v.breed === 'jamnik dlugowlosy' ? 'selected' : '' %>>jamnik dlugowlosy</option>
+        </select>
+      </label>
+      <% if (errs && errs.breed) { %>
+        <div class="error"><%= errs.breed %></div>
+      <% } %>
+    </div>
+    <div>
+      <label>Opis:<br />
+        <textarea name="description" rows="4"><%= v.description || '' %></textarea>
+      </label>
+    </div>
+    <div>
+      <label>Status:<br />
+        <select name="status">
+          <option value="" <%= !v.status ? 'selected' : '' %> >--</option>
+          <option value="dostępny" <%= v.status === 'dostępny' ? 'selected' : '' %>>dostępny</option>
+          <option value="adoptowany" <%= v.status === 'adoptowany' ? 'selected' : '' %>>adoptowany</option>
+        </select>
+      </label>
+      <% if (errs && errs.status) { %>
+        <div class="error"><%= errs.status %></div>
+      <% } %>
+    </div>
+    <div>
+    </div>
+    <div>
+      <label>Aktualne hasło (wymagane jeśli ustawione):<br />
+        <input type="password" name="password" />
+      </label>
+    </div>
+    <div>
+      <label>Nowe hasło (opcjonalnie):<br />
+        <input type="password" name="newPassword" />
+      </label>
+    </div>
+    <div>
+      <button type="submit">Zapisz</button>
+    </div>
+  </form>
+</section>
+
+<%- include('../partials/footer') %>

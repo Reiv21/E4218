@@ -1,0 +1,23 @@
+<%- include('../partials/header', { title: 'Rejestracja' }) %>
+
+<section>
+  <h1>Rejestracja</h1>
+
+  <form action="/register" method="post">
+    <div>
+      <label>Nazwa użytkownika:<br />
+        <input type="text" name="username" required />
+      </label>
+    </div>
+    <div>
+      <label>Hasło:<br />
+        <input type="password" name="password" required />
+      </label>
+    </div>
+    <div>
+      <button type="submit">Zarejestruj</button>
+    </div>
+  </form>
+</section>
+
+<%- include('../partials/footer') %>

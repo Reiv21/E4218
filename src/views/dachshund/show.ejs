@@ -1,0 +1,25 @@
+<%- include('../partials/header', { title: dachshund.name || 'Szczegóły jamnika' }) %>
+
+<section>
+  <h1><%= dachshund.name || 'Jamnik' %></h1>
+
+  <ul>
+    <li><strong>Wiek:</strong> <%= dachshund.age != null ? dachshund.age : 'nieznany' %></li>
+    <li><strong>Rasa:</strong> <%= dachshund.breed || 'nieznana' %></li>
+    <li><strong>Opis:</strong> <%= dachshund.description || '-' %></li>
+    <li><strong>Status:</strong> <%= dachshund.status || '-' %></li>
+  </ul>
+
+  <p>
+    <a class="btn btn-plain" href="/<%= dachshund._id %>/edit">Edytuj</a>
+    <form class="delete-form" action="/<%= dachshund._id %>/delete" method="post">
+      <label class="delete-label">
+        Hasło:
+        <input class="input-inline" type="password" name="password" />
+      </label>
+      <button class="btn" type="submit" onclick="return confirm('Na pewno usunąć?')">Usuń</button>
+    </form>
+  </p>
+</section>
+
+<%- include('../partials/footer') %>
