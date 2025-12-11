@@ -12,6 +12,7 @@ Prosta aplikacja do zarządzania listą jamników (dachshunds). Backend w Node.j
 ## Wymagania
 - Node.js 16+
 - MongoDB (kontener Docker, sprawdź docker.txt)
+- Git
 
 ## Instalacja
 1. Sklonuj repozytorium:

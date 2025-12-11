@@ -1,5 +1,5 @@
-- Jeśli nie masz Docker Desktop, to pobierz aplikacje z Docker Desktop z https://www.docker.com/products/docker-desktop/
-- Uruchom docker desktop i w terminalu w prawym dolnym rogu wpisz: docker run -d --name dachshundDB -p 27017:27017 mongo:6.0
+- Jeśli nie masz Docker Desktop, to pobierz aplikacje Docker Desktop z https://www.docker.com/products/docker-desktop/
+- Uruchom Docker Desktop i w terminalu w prawym dolnym rogu wpisz: docker run -d --name dachshundDB -p 27017:27017 mongo:6.0
 - Aby uruchomic kolejny raz użyj: docker start dachshundDB
 
 nazwa bazy: dachshundDB
