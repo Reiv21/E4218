@@ -7,7 +7,7 @@ Prosta aplikacja do zarządzania listą jamników (dachshunds). Backend w Node.j
 - Dodawanie nowego jamnika (formularz)
 - Edycja i usuwanie jamnika (jeżeli jamnik ma ustawione hasło, operacje te wymagają podania hasła)
 - Walidacja serwerowa pól formularzy (nazwa, rasa, status, wiek)
-- Prosty system per-rekordowego hasła (hasze SHA-256 — do celów naukowych; zalecane: bcrypt w produkcji)
+- Prosty system per-rekordowego hasła
 
 ## Wymagania
 - Node.js 16+
@@ -48,7 +48,6 @@ Serwer uruchomi się domyślnie na http://localhost:3000 (wyświetli się komuni
 Formularze używają kodowania `application/x-www-form-urlencoded` (standardowe formularze HTML).
 
 ## Konfiguracja bazy (Docker)
-Jeżeli nie masz lokalnego MongoDB, możesz szybko uruchomić kontener Docker:
 
 Sprawdź plik docker.txt
 
