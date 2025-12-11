@@ -1,28 +1,11 @@
 const dachshundModel = require('../models/dachshund');
 const crypto = require('crypto');
+const { buildFilterSortFromParams, allowedBreeds, allowedStatus } = require('../utils/queryHelper');
 
 // Render index page for dachshunds
 async function index(req, res) {
     try {
-        // Build filter from query params (GET)
-        const { name, breed, status, minAge, maxAge, sortBy, order } = req.query;
-        const filter = {};
-        if (name) filter.name = { $regex: name, $options: 'i' };
-        if (breed) filter.breed = { $regex: breed, $options: 'i' };
-        if (status) filter.status = status;
-        if (minAge) filter.age = Object.assign(filter.age || {}, { $gte: Number(minAge) });
-        if (maxAge) filter.age = Object.assign(filter.age || {}, { $lte: Number(maxAge) });
-
-        // Sorting
-        let sort = null;
-        if (sortBy) {
-            const dir = order === 'desc' ? -1 : 1;
-            // allow at least two fields: name and age, also breed
-            if (['name', 'age', 'breed', 'status'].includes(sortBy)) {
-                sort = { [sortBy]: dir };
-            }
-        }
-
+        const { filter, sort } = buildFilterSortFromParams(req.query);
         const dachshunds = await dachshundModel.getAllDachshunds(filter, sort);
         res.render('dachshund/index', { dachshunds, query: req.query });
     } catch (err) {
@@ -40,8 +23,6 @@ async function newForm(req, res) {
 async function create(req, res) {
     try {
         const { name, age, breed, description, status, password } = req.body;
-        const allowedBreeds = ['jamnik krotkowlosy', 'jamnik dlugowlosy'];
-        const allowedStatus = ['dostępny', 'adoptowany'];
         const errors = {};
         // Validation: required fields
         if (!name || !name.trim()) errors.name = 'Nazwa nie może być pusta';
@@ -80,8 +61,6 @@ async function create(req, res) {
         res.status(500).send('Wystąpił błąd serwera');
     }
 }
-
-// Show single dachshund
 async function show(req, res) {
     try {
         const dachshund = await dachshundModel.getDachshundById(req.params.id);
@@ -108,9 +87,7 @@ async function editForm(req, res) {
 // Update dachshund (requires password if set; supports changing password)
 async function update(req, res) {
     try {
-        const { name, age, breed, description, status } = req.body;
-        const allowedBreeds = ['jamnik krotkowlosy', 'jamnik dlugowlosy'];
-        const allowedStatus = ['dostępny', 'adoptowany'];
+    const { name, age, breed, description, status } = req.body;
         // Fetch existing doc to verify password if set
         const existing = await dachshundModel.getDachshundById(req.params.id);
         if (!existing) return res.status(404).send('Nie znaleziono jamnika');
@@ -186,42 +163,20 @@ async function remove(req, res) {
 
         if (existing.passwordHash) {
             if (!providedPassword) {
-                // rebuild query from hidden inputs if provided so we can re-run the same filter
-                const { name, breed, status, minAge, maxAge, sortBy, order } = req.body;
-                const filter = {};
-                if (name) filter.name = { $regex: name, $options: 'i' };
-                if (breed) filter.breed = { $regex: breed, $options: 'i' };
-                if (status) filter.status = status;
-                if (minAge) filter.age = Object.assign(filter.age || {}, { $gte: Number(minAge) });
-                if (maxAge) filter.age = Object.assign(filter.age || {}, { $lte: Number(maxAge) });
-                let sort = null;
-                if (sortBy) {
-                    const dir = order === 'desc' ? -1 : 1;
-                    if (['name', 'age', 'breed', 'status'].includes(sortBy)) sort = { [sortBy]: dir };
-                }
+                // rebuild filter/sort from hidden inputs and re-render
+                const { filter, sort } = buildFilterSortFromParams(req.body);
                 const dachshunds = await dachshundModel.getAllDachshunds(filter, sort);
                 const errors = {};
                 errors[req.params.id] = 'Hasło wymagane do usunięcia';
-                return res.status(403).render('dachshund/index', { dachshunds, errors, query: { name, breed, status, minAge, maxAge, sortBy, order } });
+                return res.status(403).render('dachshund/index', { dachshunds, errors, query: req.body });
             }
             const hash = crypto.createHash('sha256').update(providedPassword).digest('hex');
             if (hash !== existing.passwordHash) {
-                const { name, breed, status, minAge, maxAge, sortBy, order } = req.body;
-                const filter = {};
-                if (name) filter.name = { $regex: name, $options: 'i' };
-                if (breed) filter.breed = { $regex: breed, $options: 'i' };
-                if (status) filter.status = status;
-                if (minAge) filter.age = Object.assign(filter.age || {}, { $gte: Number(minAge) });
-                if (maxAge) filter.age = Object.assign(filter.age || {}, { $lte: Number(maxAge) });
-                let sort = null;
-                if (sortBy) {
-                    const dir = order === 'desc' ? -1 : 1;
-                    if (['name', 'age', 'breed', 'status'].includes(sortBy)) sort = { [sortBy]: dir };
-                }
+                const { filter, sort } = buildFilterSortFromParams(req.body);
                 const dachshunds = await dachshundModel.getAllDachshunds(filter, sort);
                 const errors = {};
                 errors[req.params.id] = 'Nieprawidłowe hasło';
-                return res.status(403).render('dachshund/index', { dachshunds, errors, query: { name, breed, status, minAge, maxAge, sortBy, order } });
+                return res.status(403).render('dachshund/index', { dachshunds, errors, query: req.body });
             }
         }
 
